@@ -1,0 +1,13 @@
+{
+  "name": "gen-ai-demo",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "python demo.py",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

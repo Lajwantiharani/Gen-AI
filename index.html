@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DSA Instructor</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-mark">DS</div>
+          <div>
+            <h1>DSA Instructor</h1>
+            <p>Practice room for algorithms</p>
+          </div>
+        </div>
+
+        <section class="settings-panel" aria-label="API settings">
+          <div class="section-title">
+            <span>Access</span>
+            <strong id="connectionState">Local ready</strong>
+          </div>
+          <label for="apiKey">Gemini API key</label>
+          <div class="key-row">
+            <input id="apiKey" type="password" autocomplete="off" placeholder="AIza..." />
+            <button id="saveKey" type="button">Save</button>
+          </div>
+        </section>
+
+        <section class="quick-panel" aria-label="Quick prompts">
+          <div class="section-title">
+            <span>Quick Practice</span>
+          </div>
+          <button class="quick-prompt" type="button" data-topic="Arrays" data-prompt="Explain arrays with an example in JavaScript.">
+            <span>Arrays</span>
+            <small>Indexing, insert, delete</small>
+          </button>
+          <button class="quick-prompt" type="button" data-topic="Searching" data-prompt="Teach binary search step by step with dry run.">
+            <span>Binary Search</span>
+            <small>Sorted search, O(log n)</small>
+          </button>
+          <button class="quick-prompt" type="button" data-topic="Recursion" data-prompt="Explain recursion using factorial and call stack.">
+            <span>Recursion</span>
+            <small>Base case, call stack</small>
+          </button>
+          <button class="quick-prompt" type="button" data-topic="Dynamic Programming" data-prompt="Explain dynamic programming and solve Fibonacci.">
+            <span>Dynamic Programming</span>
+            <small>Memoization, tabulation</small>
+          </button>
+        </section>
+
+        <section class="history-panel" aria-label="Question history">
+          <div class="section-title">
+            <span>History</span>
+            <button id="clearHistory" class="text-button" type="button">Clear</button>
+          </div>
+          <input id="historySearch" class="history-search" type="search" placeholder="Search history" />
+          <div id="historyList" class="history-list"></div>
+        </section>
+      </aside>
+
+      <section class="workspace" aria-label="DSA tutor workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Interactive tutor</p>
+            <h2>Ask a DSA question</h2>
+          </div>
+          <div class="topbar-actions">
+            <select id="topicMode" aria-label="Topic mode">
+              <option value="General DSA">General DSA</option>
+              <option value="Arrays">Arrays</option>
+              <option value="Searching">Searching</option>
+              <option value="Linked Lists">Linked Lists</option>
+              <option value="Stacks and Queues">Stacks and Queues</option>
+              <option value="Trees and Graphs">Trees and Graphs</option>
+              <option value="Dynamic Programming">Dynamic Programming</option>
+            </select>
+            <button id="exportChat" class="ghost-button" type="button">Export</button>
+            <button id="clearChat" class="ghost-button" type="button">New Chat</button>
+          </div>
+        </header>
+
+        <section class="stats-strip" aria-label="Study stats">
+          <div class="stat-tile">
+            <span id="questionCount">0</span>
+            <p>Questions</p>
+          </div>
+          <div class="stat-tile">
+            <span id="topicCount">0</span>
+            <p>Topics</p>
+          </div>
+          <div class="stat-tile">
+            <span id="lastTopic">Ready</span>
+            <p>Current focus</p>
+          </div>
+        </section>
+
+        <section class="chat-card">
+          <div id="messages" class="messages" aria-live="polite"></div>
+
+          <form id="chatForm" class="composer">
+            <textarea
+              id="question"
+              rows="1"
+              placeholder="Ask about arrays, recursion, trees, graphs, DP..."
+              aria-label="DSA question"
+              required
+            ></textarea>
+            <button id="sendButton" type="submit">Send</button>
+          </form>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>

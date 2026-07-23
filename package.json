@@ -2,11 +2,21 @@
   "name": "gen-ai-demo",
   "version": "1.0.0",
   "description": "",
+  "homepage": "https://github.com/Lajwantiharani/Gen-AI#readme",
+  "bugs": {
+    "url": "https://github.com/Lajwantiharani/Gen-AI/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lajwantiharani/Gen-AI.git"
+  },
   "license": "ISC",
   "author": "",
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "dsa": "node --env-file=.env DSA.js",
+    "web": "node server.js",
     "start": "python demo.py",
     "test": "echo \"Error: no test specified\" && exit 1"
   }

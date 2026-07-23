@@ -3,80 +3,183 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DSA Instructor</title>
+    <title>DSA Instructor — Learn Data Structures & Algorithms</title>
+    <meta name="description" content="Interactive AI tutor for Data Structures and Algorithms with structured 7-part lessons." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main class="app-shell">
-      <aside class="sidebar">
+      <aside class="sidebar" id="sidebar">
         <div class="brand-block">
-          <div class="brand-mark">DS</div>
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="4" width="10" height="10" rx="2" fill="currentColor" opacity="0.9"/>
+              <rect x="18" y="4" width="10" height="10" rx="2" fill="currentColor" opacity="0.5"/>
+              <rect x="4" y="18" width="10" height="10" rx="2" fill="currentColor" opacity="0.5"/>
+              <rect x="18" y="18" width="10" height="10" rx="2" fill="currentColor" opacity="0.9"/>
+            </svg>
+          </div>
           <div>
             <h1>DSA Instructor</h1>
-            <p>Practice room for algorithms</p>
+            <p>Ask any DSA question — concepts, problems & more</p>
           </div>
         </div>
 
-        <section class="settings-panel" aria-label="API settings">
+        <section class="learning-path" aria-label="Learning path">
           <div class="section-title">
-            <span>Access</span>
-            <strong id="connectionState">Local ready</strong>
+            <span>How answers work</span>
           </div>
+          <ol class="format-steps">
+            <li><strong>Define</strong> the concept</li>
+            <li><strong>Explain</strong> why it matters</li>
+            <li><strong>Walk through</strong> step by step</li>
+            <li><strong>Show</strong> code examples</li>
+            <li><strong>Analyze</strong> complexity</li>
+            <li><strong>Warn</strong> about mistakes</li>
+            <li><strong>Suggest</strong> practice</li>
+          </ol>
+        </section>
+
+        <section class="settings-panel" aria-label="Settings">
+          <div class="section-title">
+            <span>Settings</span>
+            <strong id="connectionState">Ready</strong>
+          </div>
+
+          <label for="skillLevel">Skill level</label>
+          <select id="skillLevel" class="sidebar-select" aria-label="Skill level">
+            <option value="beginner">Beginner — plain English</option>
+            <option value="intermediate">Intermediate — balanced depth</option>
+            <option value="interview">Interview prep — FAANG style</option>
+          </select>
+
           <label for="apiKey">Gemini API key</label>
           <div class="key-row">
-            <input id="apiKey" type="password" autocomplete="off" placeholder="AIza..." />
+            <input id="apiKey" type="password" autocomplete="off" placeholder="Paste key or use server .env" />
+            <button id="toggleKey" type="button" class="icon-button" title="Show/hide key" aria-label="Toggle API key visibility">👁</button>
             <button id="saveKey" type="button">Save</button>
           </div>
+          <p class="hint">Answers are generated live by Gemini AI. Add your key here or set <code>GEMINI_API_KEY</code> in <code>.env</code>.</p>
         </section>
 
         <section class="quick-panel" aria-label="Quick prompts">
           <div class="section-title">
             <span>Quick Practice</span>
           </div>
-          <button class="quick-prompt" type="button" data-topic="Arrays" data-prompt="Explain arrays with an example in JavaScript.">
-            <span>Arrays</span>
-            <small>Indexing, insert, delete</small>
-          </button>
-          <button class="quick-prompt" type="button" data-topic="Searching" data-prompt="Teach binary search step by step with dry run.">
-            <span>Binary Search</span>
-            <small>Sorted search, O(log n)</small>
-          </button>
-          <button class="quick-prompt" type="button" data-topic="Recursion" data-prompt="Explain recursion using factorial and call stack.">
-            <span>Recursion</span>
-            <small>Base case, call stack</small>
-          </button>
-          <button class="quick-prompt" type="button" data-topic="Dynamic Programming" data-prompt="Explain dynamic programming and solve Fibonacci.">
-            <span>Dynamic Programming</span>
-            <small>Memoization, tabulation</small>
-          </button>
+          <div class="prompt-grid">
+            <button class="quick-prompt" type="button" data-topic="Arrays" data-icon="📦" data-prompt="Explain arrays with an example in JavaScript.">
+              <span class="prompt-icon">📦</span>
+              <span class="prompt-text">
+                <strong>Arrays</strong>
+                <small>Indexing, insert, delete</small>
+              </span>
+            </button>
+            <button class="quick-prompt" type="button" data-topic="Searching" data-icon="🔍" data-prompt="Teach binary search step by step with dry run.">
+              <span class="prompt-icon">🔍</span>
+              <span class="prompt-text">
+                <strong>Binary Search</strong>
+                <small>Sorted search, O(log n)</small>
+              </span>
+            </button>
+            <button class="quick-prompt" type="button" data-topic="Recursion" data-icon="🔄" data-prompt="Explain recursion using factorial and call stack.">
+              <span class="prompt-icon">🔄</span>
+              <span class="prompt-text">
+                <strong>Recursion</strong>
+                <small>Base case, call stack</small>
+              </span>
+            </button>
+            <button class="quick-prompt" type="button" data-topic="Dynamic Programming" data-icon="🧩" data-prompt="Explain dynamic programming and solve Fibonacci.">
+              <span class="prompt-icon">🧩</span>
+              <span class="prompt-text">
+                <strong>Dynamic Programming</strong>
+                <small>Memoization, tabulation</small>
+              </span>
+            </button>
+            <button class="quick-prompt" type="button" data-topic="Stacks and Queues" data-icon="📚" data-prompt="Explain stacks and queues with real-world analogies and JavaScript examples.">
+              <span class="prompt-icon">📚</span>
+              <span class="prompt-text">
+                <strong>Stacks & Queues</strong>
+                <small>LIFO vs FIFO</small>
+              </span>
+            </button>
+            <button class="quick-prompt" type="button" data-topic="Trees and Graphs" data-icon="🌳" data-prompt="Explain binary trees and BFS vs DFS with examples.">
+              <span class="prompt-icon">🌳</span>
+              <span class="prompt-text">
+                <strong>Trees & Graphs</strong>
+                <small>BFS, DFS, traversals</small>
+              </span>
+            </button>
+            <button class="quick-prompt" type="button" data-topic="Sorting" data-icon="📊" data-prompt="Compare bubble sort, merge sort, and quick sort with complexity.">
+              <span class="prompt-icon">📊</span>
+              <span class="prompt-text">
+                <strong>Sorting</strong>
+                <small>Merge, quick, bubble</small>
+              </span>
+            </button>
+            <button class="quick-prompt" type="button" data-topic="Hashing" data-icon="🔑" data-prompt="Explain hash maps and how collision handling works.">
+              <span class="prompt-icon">🔑</span>
+              <span class="prompt-text">
+                <strong>Hash Maps</strong>
+                <small>O(1) lookup, collisions</small>
+              </span>
+            </button>
+          </div>
         </section>
+
+        <details class="cheatsheet-panel">
+          <summary>Big-O Cheat Sheet</summary>
+          <div class="cheatsheet-grid">
+            <div class="cheat-item"><code>O(1)</code><span>Hash lookup, array index</span></div>
+            <div class="cheat-item"><code>O(log n)</code><span>Binary search</span></div>
+            <div class="cheat-item"><code>O(n)</code><span>Linear scan, single loop</span></div>
+            <div class="cheat-item"><code>O(n log n)</code><span>Merge sort, heap sort</span></div>
+            <div class="cheat-item"><code>O(n²)</code><span>Nested loops, bubble sort</span></div>
+            <div class="cheat-item"><code>O(2ⁿ)</code><span>Naive recursion, subsets</span></div>
+          </div>
+        </details>
 
         <section class="history-panel" aria-label="Question history">
           <div class="section-title">
             <span>History</span>
             <button id="clearHistory" class="text-button" type="button">Clear</button>
           </div>
-          <input id="historySearch" class="history-search" type="search" placeholder="Search history" />
+          <input id="historySearch" class="history-search" type="search" placeholder="Search past questions..." />
           <div id="historyList" class="history-list"></div>
         </section>
       </aside>
 
       <section class="workspace" aria-label="DSA tutor workspace">
         <header class="topbar">
-          <div>
-            <p class="eyebrow">Interactive tutor</p>
-            <h2>Ask a DSA question</h2>
+          <div class="topbar-left">
+            <button id="sidebarToggle" class="icon-button mobile-only" type="button" aria-label="Toggle sidebar">☰</button>
+            <div>
+              <p class="eyebrow">Interactive tutor</p>
+              <h2>Ask any DSA question</h2>
+            </div>
           </div>
           <div class="topbar-actions">
-            <select id="topicMode" aria-label="Topic mode">
-              <option value="General DSA">General DSA</option>
+            <select id="topicMode" aria-label="Topic focus">
+              <option value="General DSA">General DSA (any topic)</option>
               <option value="Arrays">Arrays</option>
-              <option value="Searching">Searching</option>
               <option value="Linked Lists">Linked Lists</option>
               <option value="Stacks and Queues">Stacks and Queues</option>
               <option value="Trees and Graphs">Trees and Graphs</option>
+              <option value="Searching">Searching</option>
+              <option value="Sorting">Sorting</option>
+              <option value="Hashing">Hashing</option>
+              <option value="Heaps">Heaps & Priority Queues</option>
               <option value="Dynamic Programming">Dynamic Programming</option>
+              <option value="Greedy">Greedy Algorithms</option>
+              <option value="Backtracking">Backtracking</option>
+              <option value="Graph Algorithms">Graph Algorithms</option>
+              <option value="Two Pointers">Two Pointers & Sliding Window</option>
+              <option value="Complexity">Time & Space Complexity</option>
+              <option value="Interview Problems">Coding Interview Problems</option>
             </select>
+            <button id="themeToggle" class="ghost-button" type="button" title="Toggle dark mode">🌙 Dark</button>
             <button id="exportChat" class="ghost-button" type="button">Export</button>
             <button id="clearChat" class="ghost-button" type="button">New Chat</button>
           </div>
@@ -85,13 +188,17 @@
         <section class="stats-strip" aria-label="Study stats">
           <div class="stat-tile">
             <span id="questionCount">0</span>
-            <p>Questions</p>
+            <p>Questions asked</p>
           </div>
           <div class="stat-tile">
             <span id="topicCount">0</span>
-            <p>Topics</p>
+            <p>Topics explored</p>
           </div>
           <div class="stat-tile">
+            <span id="streakCount">0</span>
+            <p>Session streak</p>
+          </div>
+          <div class="stat-tile accent">
             <span id="lastTopic">Ready</span>
             <p>Current focus</p>
           </div>
@@ -101,18 +208,28 @@
           <div id="messages" class="messages" aria-live="polite"></div>
 
           <form id="chatForm" class="composer">
-            <textarea
-              id="question"
-              rows="1"
-              placeholder="Ask about arrays, recursion, trees, graphs, DP..."
-              aria-label="DSA question"
-              required
-            ></textarea>
-            <button id="sendButton" type="submit">Send</button>
+            <div class="composer-inner">
+              <textarea
+                id="question"
+                rows="1"
+                placeholder="Ask anything DSA — e.g. two sum, Dijkstra, sliding window, red-black trees, Big-O..."
+                aria-label="DSA question"
+                required
+              ></textarea>
+              <div class="composer-actions">
+                <span class="composer-hint">Enter to send · Shift+Enter for new line</span>
+                <button id="sendButton" type="submit">
+                  <span class="send-label">Send</span>
+                  <span class="send-icon" aria-hidden="true">→</span>
+                </button>
+              </div>
+            </div>
           </form>
         </section>
       </section>
     </main>
+
+    <div id="sidebarOverlay" class="sidebar-overlay" hidden></div>
 
     <script src="app.js" type="module"></script>
   </body>

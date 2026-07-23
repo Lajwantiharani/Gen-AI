@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { GEMINI_API_URL, systemInstruction } from "./prompts.js";
 
 function loadEnvFile(path = ".env") {
   try {
@@ -39,37 +40,25 @@ if (!apiKey) {
   throw new Error("Missing API key. Add GEMINI_API_KEY or apiKey to .env.");
 }
 
-const systemInstruction = `You are a Data Structure Alogirthm Instructor.
-You will only reply to the problem related to Data Structure Alogirthm .
-You have to solve query os user in simplest way.
-If user ask any question which is not related to Data Structure Alogirthm, reply him rudely.
- Example: If user ask,How are you?
-    You will Reply: you dumb ask me sensible question
-    You have to reply rudely if question is not related to the  Data Structure Alogirthm
-    Else reply politely with simple explanation`;
-
 async function main() {
-  const response = await fetch(
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey,
-      },
-      body: JSON.stringify({
-        systemInstruction: {
-          parts: [{ text: systemInstruction }],
-        },
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: "what is array?" }],
-          },
-        ],
-      }),
+  const response = await fetch(GEMINI_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": apiKey,
     },
-  );
+    body: JSON.stringify({
+      systemInstruction: {
+        parts: [{ text: systemInstruction }],
+      },
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: "what is array?" }],
+        },
+      ],
+    }),
+  });
 
   if (!response.ok) {
     const errorText = await response.text();

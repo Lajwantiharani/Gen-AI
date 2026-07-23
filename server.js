@@ -2,16 +2,10 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { existsSync, readFileSync } from "node:fs";
 import { extname, join, resolve } from "node:path";
+import { GEMINI_API_URL, GEMINI_MODEL, systemInstruction } from "./prompts.js";
 
 const START_PORT = Number(process.env.PORT ?? 3000);
 const ROOT = process.cwd();
-const API_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
-
-const systemInstruction = `You are a friendly Data Structures and Algorithms instructor.
-Only answer questions related to Data Structures, Algorithms, programming problem solving, complexity analysis, and coding interview preparation.
-If the user asks something unrelated, politely redirect them to ask a DSA question.
-Explain concepts simply, use examples, include time and space complexity when useful, and prefer JavaScript code unless the user asks for another language.`;
 
 loadEnvFile();
 
@@ -19,6 +13,16 @@ const server = createServer(async (request, response) => {
   try {
     if (request.method === "POST" && request.url === "/api/ask") {
       await handleAsk(request, response);
+      return;
+    }
+
+    if (request.method === "GET" && request.url === "/api/health") {
+      const hasServerKey = Boolean(process.env.GEMINI_API_KEY ?? process.env.apiKey);
+      sendJson(response, 200, {
+        ok: true,
+        model: GEMINI_MODEL,
+        hasServerKey,
+      });
       return;
     }
 
@@ -51,38 +55,40 @@ function listenOnAvailablePort(port) {
 }
 
 async function handleAsk(request, response) {
-  const apiKey = process.env.GEMINI_API_KEY ?? process.env.apiKey;
-
-  if (!apiKey) {
-    sendJson(response, 400, { error: "Missing GEMINI_API_KEY in .env." });
-    return;
-  }
-
   const body = await readRequestJson(request);
   const question = String(body.question ?? "").trim();
+  const clientKey = String(body.apiKey ?? "").trim();
+  const apiKey = process.env.GEMINI_API_KEY ?? process.env.apiKey ?? clientKey;
+
+  if (!apiKey) {
+    sendJson(response, 400, {
+      error: "Missing Gemini API key. Add GEMINI_API_KEY to .env or paste your key in the app sidebar.",
+    });
+    return;
+  }
 
   if (!question) {
     sendJson(response, 400, { error: "Question is required." });
     return;
   }
 
-  const geminiResponse = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-goog-api-key": apiKey,
+  const history = Array.isArray(body.history) ? body.history : [];
+  const contents = [
+    ...history.map((item) => ({
+      role: item.role === "assistant" ? "model" : "user",
+      parts: [{ text: item.text }],
+    })),
+    {
+      role: "user",
+      parts: [{ text: question }],
     },
-    body: JSON.stringify({
-      systemInstruction: {
-        parts: [{ text: systemInstruction }],
-      },
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: question }],
-        },
-      ],
-    }),
+  ];
+
+  const geminiResponse = await callGeminiWithRetry(apiKey, {
+    systemInstruction: {
+      parts: [{ text: systemInstruction }],
+    },
+    contents,
   });
 
   if (!geminiResponse.ok) {
@@ -143,6 +149,32 @@ function readRequestJson(request) {
 function sendJson(response, statusCode, payload) {
   response.writeHead(statusCode, { "Content-Type": "application/json; charset=utf-8" });
   response.end(JSON.stringify(payload));
+}
+
+async function callGeminiWithRetry(apiKey, body, maxAttempts = 3) {
+  let lastResponse = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    lastResponse = await fetch(GEMINI_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (lastResponse.status !== 429 || attempt === maxAttempts) {
+      return lastResponse;
+    }
+
+    const details = await lastResponse.text();
+    const retryMatch = details.match(/Please retry in ([0-9.]+)s/);
+    const waitMs = Math.min(Math.ceil(Number(retryMatch?.[1] ?? 12) * 1000), 30000);
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
+  }
+
+  return lastResponse;
 }
 
 function getContentType(filePath) {

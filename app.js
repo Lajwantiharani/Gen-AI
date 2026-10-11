@@ -7,7 +7,155 @@ const STORAGE_KEYS = {
   history: "dsaInstructorHistory",
   theme: "dsaInstructorTheme",
   skillLevel: "dsaInstructorSkillLevel",
+  dailyGoal: "dsaInstructorDailyGoal",
+  activityDays: "dsaInstructorActivityDays",
+  completedChallenges: "dsaInstructorCompletedChallenges",
 };
+
+const DAILY_CHALLENGES = [
+  {
+    topic: "Arrays + Hash Map",
+    focus: "Arrays",
+    difficulty: "Easy",
+    estimate: "8 min",
+    title: "Find the pair",
+    prompt: "Given an array of integers and a target, return the indices of the two numbers that add up to the target. Assume exactly one solution exists.",
+    example: "nums = [2, 7, 11, 15], target = 9  →  [0, 1]",
+    hints: [
+      "For each number, ask what value would complete the target sum.",
+      "Store numbers you have already visited so you can look up a complement quickly.",
+      "Check whether the complement is present before storing the current number.",
+    ],
+    solution: `function twoSum(nums, target) {
+  const seen = new Map();
+  for (let index = 0; index < nums.length; index++) {
+    const complement = target - nums[index];
+    if (seen.has(complement)) return [seen.get(complement), index];
+    seen.set(nums[index], index);
+  }
+}`,
+    solutionNote: "One pass checks each complement in constant average time: O(n) time and O(n) space.",
+    coach: "Coach me through Two Sum without revealing the full solution immediately. Ask for my approach, give one hint at a time if I get stuck, then review correctness and time and space complexity.",
+  },
+  {
+    topic: "Stacks",
+    focus: "Stacks and Queues",
+    difficulty: "Easy",
+    estimate: "10 min",
+    title: "Balance the brackets",
+    prompt: "Given a string containing parentheses, brackets, and braces, determine whether every opening bracket closes in the correct order.",
+    example: 'input = "{[()]}", output = true',
+    hints: [
+      "The most recently opened bracket must be the first one closed.",
+      "Keep unmatched opening brackets in a last-in, first-out structure.",
+      "When a closing bracket arrives, compare it with the stack top; the stack must be empty at the end.",
+    ],
+    solution: `function isValid(text) {
+  const pairs = new Map([[")", "("], ["]", "["], ["}", "{"]]);
+  const stack = [];
+  for (const char of text) {
+    if (!pairs.has(char)) stack.push(char);
+    else if (stack.pop() !== pairs.get(char)) return false;
+  }
+  return stack.length === 0;
+}`,
+    solutionNote: "Each character is pushed or popped at most once: O(n) time and O(n) space.",
+    coach: "Coach me through validating balanced brackets with a stack. Help me reason about nesting and edge cases before reviewing my approach.",
+  },
+  {
+    topic: "Binary Search",
+    focus: "Searching",
+    difficulty: "Easy",
+    estimate: "8 min",
+    title: "Find the insertion point",
+    prompt: "Given a sorted array and a target, return its index if present; otherwise return the index where it should be inserted to keep the array sorted.",
+    example: "nums = [1, 3, 5, 6], target = 2  →  1",
+    hints: [
+      "The answer is a boundary in a sorted range, so a full scan is unnecessary.",
+      "Maintain a half-open range: the left boundary is included and the right boundary is excluded.",
+      "When the range becomes empty, the left boundary is the insertion index.",
+    ],
+    solution: `function searchInsert(nums, target) {
+  let left = 0;
+  let right = nums.length;
+  while (left < right) {
+    const middle = left + Math.floor((right - left) / 2);
+    if (nums[middle] < target) left = middle + 1;
+    else right = middle;
+  }
+  return left;
+}`,
+    solutionNote: "The search interval is halved each step: O(log n) time and O(1) extra space.",
+    coach: "Coach me through finding an insertion point with binary search. Have me define the loop invariant and test boundary cases before showing a solution.",
+  },
+  {
+    topic: "Dynamic Programming",
+    focus: "Dynamic Programming",
+    difficulty: "Medium",
+    estimate: "12 min",
+    title: "Best contiguous sum",
+    prompt: "Given an integer array, find the contiguous subarray with the largest sum. The array may contain negative values.",
+    example: "nums = [-2, 1, -3, 4, -1, 2, 1, -5, 4]  →  6",
+    hints: [
+      "At each position, decide whether to extend the previous subarray or start a new one.",
+      "Track the best sum ending here and the best sum seen anywhere.",
+      "The running recurrence is max(current value, previous running sum + current value).",
+    ],
+    solution: `function maxSubArray(nums) {
+  let current = nums[0];
+  let best = nums[0];
+  for (let index = 1; index < nums.length; index++) {
+    current = Math.max(nums[index], current + nums[index]);
+    best = Math.max(best, current);
+  }
+  return best;
+}`,
+    solutionNote: "Kadane's algorithm makes one pass and stores two values: O(n) time and O(1) extra space.",
+    coach: "Coach me through the maximum subarray problem. Help me derive the recurrence from the choice to extend or restart, then test an all-negative array.",
+  },
+  {
+    topic: "Graphs + BFS",
+    focus: "Graph Algorithms",
+    difficulty: "Medium",
+    estimate: "15 min",
+    title: "Count connected islands",
+    prompt: "Given a grid of land ('1') and water ('0'), count islands. Land connects horizontally or vertically, not diagonally.",
+    example: 'grid = [["1","1","0"],["0","1","0"],["1","0","1"]]  →  3',
+    hints: [
+      "Every unvisited land cell begins a new island.",
+      "Visit all connected neighbors so one island is counted only once.",
+      "Use a queue or stack, marking cells visited as soon as they are added.",
+    ],
+    solution: `function countIslands(grid) {
+  if (!grid.length) return 0;
+  const rows = grid.length;
+  const cols = grid[0].length;
+  let islands = 0;
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      if (grid[row][col] !== "1") continue;
+      islands++;
+      const queue = [[row, col]];
+      grid[row][col] = "0";
+      for (let head = 0; head < queue.length; head++) {
+        const [r, c] = queue[head];
+        for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const nr = r + dr;
+          const nc = c + dc;
+          if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] === "1") {
+            grid[nr][nc] = "0";
+            queue.push([nr, nc]);
+          }
+        }
+      }
+    }
+  }
+  return islands;
+}`,
+    solutionNote: "Each cell is visited once: O(rows × columns) time and O(rows × columns) worst-case queue space.",
+    coach: "Coach me through counting islands with BFS. Help me reason about visited cells, four-direction boundaries, and complexity.",
+  },
+];
 
 const STARTER_TOPICS = [
   { icon: "📦", topic: "Arrays", prompt: "Explain arrays with an example in JavaScript." },
@@ -42,12 +190,36 @@ const themeToggle = document.querySelector("#themeToggle");
 const sidebar = document.querySelector("#sidebar");
 const sidebarToggle = document.querySelector("#sidebarToggle");
 const sidebarOverlay = document.querySelector("#sidebarOverlay");
+const challengeTitle = document.querySelector("#dailyChallengeTitle");
+const challengeTopic = document.querySelector("#challengeTopic");
+const challengeDifficulty = document.querySelector("#challengeDifficulty");
+const challengeEstimate = document.querySelector("#challengeEstimate");
+const challengePrompt = document.querySelector("#dailyChallengePrompt");
+const challengeExample = document.querySelector("#challengeExample");
+const challengeEdition = document.querySelector("#challengeEdition");
+const challengeHintButton = document.querySelector("#challengeHint");
+const challengeHintText = document.querySelector("#challengeHintText");
+const challengeSolutionCode = document.querySelector("#challengeSolutionCode");
+const challengeSolutionNote = document.querySelector("#challengeSolutionNote");
+const challengeCompleteButton = document.querySelector("#challengeComplete");
+const goalTarget = document.querySelector("#goalTarget");
+const dailyProgress = document.querySelector("#dailyProgress");
+const dailyProgressFill = document.querySelector("#dailyProgressFill");
+const dailyProgressText = document.querySelector("#dailyProgressText");
+const dailyProgressPercent = document.querySelector("#dailyProgressPercent");
 
 let chatMessages = loadJson(STORAGE_KEYS.messages, []);
 let historyItems = loadJson(STORAGE_KEYS.history, []);
+let activityDays = loadJson(STORAGE_KEYS.activityDays, []);
+let completedChallenges = loadJson(STORAGE_KEYS.completedChallenges, []);
+let dailyGoal = Math.min(20, Math.max(1, Number(loadJson(STORAGE_KEYS.dailyGoal, 3)) || 3));
+let challengeHintIndex = 0;
+const todayKey = getLocalDateKey();
+const dailyChallenge = DAILY_CHALLENGES[Math.floor(new Date().setHours(0, 0, 0, 0) / 86400000) % DAILY_CHALLENGES.length];
 
 initTheme();
 initSettings();
+initDailyChallenge();
 renderMessages();
 renderHistory();
 updateStats();
@@ -67,6 +239,116 @@ function initTheme() {
     document.documentElement.dataset.theme = "dark";
     themeToggle.textContent = "☀️ Light";
   }
+}
+
+function initDailyChallenge() {
+  challengeEdition.textContent = new Intl.DateTimeFormat("en", {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+  }).format(new Date());
+  challengeTitle.textContent = dailyChallenge.title;
+  challengeTopic.textContent = dailyChallenge.topic;
+  challengeDifficulty.textContent = dailyChallenge.difficulty;
+  challengeDifficulty.dataset.level = dailyChallenge.difficulty.toLowerCase();
+  challengeEstimate.textContent = dailyChallenge.estimate;
+  challengePrompt.textContent = dailyChallenge.prompt;
+  challengeExample.textContent = dailyChallenge.example;
+  challengeSolutionCode.textContent = dailyChallenge.solution;
+  challengeSolutionNote.textContent = dailyChallenge.solutionNote;
+  goalTarget.textContent = String(dailyGoal);
+  updateChallengeCompletion();
+  updateDailyGoal();
+
+  challengeHintButton.addEventListener("click", () => {
+    const hint = dailyChallenge.hints[challengeHintIndex];
+    if (!hint) return;
+    challengeHintIndex++;
+    challengeHintText.textContent = `Hint ${challengeHintIndex} of ${dailyChallenge.hints.length}  ${hint}`;
+    challengeHintText.hidden = false;
+    challengeHintButton.textContent = challengeHintIndex < dailyChallenge.hints.length
+      ? "Reveal next hint"
+      : "All hints revealed";
+    challengeHintButton.disabled = challengeHintIndex >= dailyChallenge.hints.length;
+  });
+
+  document.querySelector("#challengeDiscuss").addEventListener("click", () => {
+    topicMode.value = dailyChallenge.focus;
+    questionInput.value = dailyChallenge.coach;
+    resizeComposer();
+    chatForm.requestSubmit();
+  });
+
+  challengeCompleteButton.addEventListener("click", () => {
+    completedChallenges = completedChallenges.includes(todayKey)
+      ? completedChallenges.filter((date) => date !== todayKey)
+      : [...completedChallenges, todayKey].slice(-365);
+    localStorage.setItem(STORAGE_KEYS.completedChallenges, JSON.stringify(completedChallenges));
+    updateChallengeCompletion();
+  });
+
+  document.querySelector("#goalDecrease").addEventListener("click", () => setDailyGoal(dailyGoal - 1));
+  document.querySelector("#goalIncrease").addEventListener("click", () => setDailyGoal(dailyGoal + 1));
+}
+
+function updateChallengeCompletion() {
+  const isComplete = completedChallenges.includes(todayKey);
+  challengeCompleteButton.textContent = isComplete ? "Solved today" : "Mark solved";
+  challengeCompleteButton.setAttribute("aria-pressed", String(isComplete));
+  challengeCompleteButton.classList.toggle("is-complete", isComplete);
+}
+
+function setDailyGoal(value) {
+  dailyGoal = Math.min(20, Math.max(1, value));
+  localStorage.setItem(STORAGE_KEYS.dailyGoal, JSON.stringify(dailyGoal));
+  goalTarget.textContent = String(dailyGoal);
+  updateDailyGoal();
+}
+
+function updateDailyGoal() {
+  const todayQuestions = Math.max(
+    historyItems.filter((item) => getLocalDateKey(new Date(item.createdAt)) === todayKey).length,
+    chatMessages.filter((message) => message.role === "user" && getLocalDateKey(new Date(message.createdAt)) === todayKey).length,
+  );
+  const progress = Math.min(100, Math.round((todayQuestions / dailyGoal) * 100));
+  dailyProgressText.textContent = `${todayQuestions} of ${dailyGoal} questions today`;
+  dailyProgressPercent.textContent = `${progress}%`;
+  dailyProgressFill.style.width = `${progress}%`;
+  dailyProgress.setAttribute("aria-valuemax", String(dailyGoal));
+  dailyProgress.setAttribute("aria-valuenow", String(Math.min(todayQuestions, dailyGoal)));
+}
+
+function recordStudyDay() {
+  activityDays = [...new Set([...activityDays, todayKey])].slice(-365);
+  localStorage.setItem(STORAGE_KEYS.activityDays, JSON.stringify(activityDays));
+}
+
+function getStudyStreak() {
+  const studiedDays = new Set([
+    ...activityDays,
+    ...historyItems.map((item) => getLocalDateKey(new Date(item.createdAt))),
+  ]);
+  const cursor = new Date();
+  let dateKey = getLocalDateKey(cursor);
+  if (!studiedDays.has(dateKey)) {
+    cursor.setDate(cursor.getDate() - 1);
+    dateKey = getLocalDateKey(cursor);
+  }
+
+  let streak = 0;
+  while (studiedDays.has(dateKey)) {
+    streak++;
+    cursor.setDate(cursor.getDate() - 1);
+    dateKey = getLocalDateKey(cursor);
+  }
+  return streak;
+}
+
+function getLocalDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 saveKeyButton.addEventListener("click", () => {
@@ -174,6 +456,7 @@ chatForm.addEventListener("submit", async (event) => {
 
   pushMessage("user", question, topic);
   saveHistoryItem(question, topic);
+  recordStudyDay();
   questionInput.value = "";
   resizeComposer();
   setLoading(true);
@@ -593,8 +876,9 @@ function updateStats() {
 
   questionCount.textContent = String(userMessages.length);
   topicCount.textContent = String(topics.size);
-  streakCount.textContent = String(userMessages.length);
+  streakCount.textContent = String(getStudyStreak());
   lastTopic.textContent = latestTopic;
+  updateDailyGoal();
 }
 
 function setLoading(isLoading) {

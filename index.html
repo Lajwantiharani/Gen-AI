@@ -188,7 +188,7 @@
         <section class="stats-strip" aria-label="Study stats">
           <div class="stat-tile">
             <span id="questionCount">0</span>
-            <p>Questions asked</p>
+            <p>Questions this session</p>
           </div>
           <div class="stat-tile">
             <span id="topicCount">0</span>
@@ -196,11 +196,64 @@
           </div>
           <div class="stat-tile">
             <span id="streakCount">0</span>
-            <p>Session streak</p>
+            <p>Study-day streak</p>
           </div>
           <div class="stat-tile accent">
             <span id="lastTopic">Ready</span>
             <p>Current focus</p>
+          </div>
+        </section>
+
+        <section class="daily-challenge" aria-labelledby="dailyChallengeTitle">
+          <div class="challenge-topline">
+            <div class="challenge-label">
+              <span class="challenge-mark" aria-hidden="true">01</span>
+              <span class="eyebrow">Daily practice</span>
+              <span id="challengeEdition" class="challenge-edition"></span>
+            </div>
+            <div class="goal-control" aria-label="Daily question goal">
+              <span>Daily goal</span>
+              <button id="goalDecrease" type="button" aria-label="Decrease daily goal" title="Decrease daily goal">−</button>
+              <strong id="goalTarget">3</strong>
+              <button id="goalIncrease" type="button" aria-label="Increase daily goal" title="Increase daily goal">+</button>
+              <span>questions</span>
+            </div>
+          </div>
+          <div class="challenge-body">
+            <div class="challenge-copy">
+              <div class="challenge-tags">
+                <span id="challengeTopic"></span>
+                <span id="challengeDifficulty" class="difficulty-tag"></span>
+                <span id="challengeEstimate"></span>
+              </div>
+              <h3 id="dailyChallengeTitle"></h3>
+              <p id="dailyChallengePrompt"></p>
+              <p id="challengeExample" class="challenge-example"></p>
+            </div>
+            <div class="challenge-actions">
+              <button id="challengeDiscuss" class="challenge-primary" type="button">Practice with AI <span aria-hidden="true">→</span></button>
+              <button id="challengeHint" class="challenge-secondary" type="button">Reveal first hint</button>
+              <button id="challengeComplete" class="challenge-complete" type="button" aria-pressed="false">Mark solved</button>
+            </div>
+          </div>
+          <div class="challenge-bottom">
+            <p id="challengeHintText" class="challenge-hint" hidden></p>
+            <details class="challenge-solution">
+              <summary>Solution and walkthrough</summary>
+              <div class="solution-content">
+                <pre><code id="challengeSolutionCode"></code></pre>
+                <p id="challengeSolutionNote"></p>
+              </div>
+            </details>
+            <div class="goal-meter">
+              <div class="goal-meter-copy">
+                <span id="dailyProgressText">0 of 3 questions today</span>
+                <span id="dailyProgressPercent">0%</span>
+              </div>
+              <div id="dailyProgress" class="goal-progress" role="progressbar" aria-label="Daily question goal progress" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0">
+                <span id="dailyProgressFill"></span>
+              </div>
+            </div>
           </div>
         </section>
 
